@@ -1,0 +1,13 @@
+<div class="flex justify-center items-center h-screen">
+    <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+        <legend class="fieldset-legend text-xl">Login</legend>
+
+        <label class="label text-lg">Username</label>
+        <input type="username" class="input" placeholder="Username" [formField]="loginForm.username" />
+
+        <label class="label text-lg">Password</label>
+        <input type="password" class="input" placeholder="Password" [formField]="loginForm.password">
+
+        <button class="btn btn-neutral mt-4" (click)="login()">Login</button>
+    </fieldset>
+</div>
