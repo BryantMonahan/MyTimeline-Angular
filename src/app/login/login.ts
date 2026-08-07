@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FormField, form } from '@angular/forms/signals';
+import { FormField, email, form, minLength, required } from '@angular/forms/signals';
+import { schedulePromise } from 'rxjs/internal/scheduled/schedulePromise';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,11 @@ export class Login {
     password: ''
   })
 
-  loginForm = form(this.loginModel)
+  loginForm = form(this.loginModel, (schema) => {
+    required(schema.username, { message: "Username is required" }),
+      required(schema.password, { message: "Password is required" }),
+      minLength(schema.password, 8, { message: "Password must be at least 8 characters long " })
+  })
 
   login() {
     console.log(this.loginForm.password().value())

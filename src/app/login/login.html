@@ -4,10 +4,23 @@
 
         <label class="label text-lg">Username</label>
         <input type="username" class="input" placeholder="Username" [formField]="loginForm.username" />
+        @if (loginForm.username().touched() && loginForm.username().invalid()) {
+        <ul>
+            @for (error of loginForm.username().errors(); track $index) {
+            <li>{{ error.message }}</li>
+            }
+        </ul>
+        }
 
         <label class="label text-lg">Password</label>
         <input type="password" class="input" placeholder="Password" [formField]="loginForm.password">
-
+        @if (loginForm.password().touched() && loginForm.password().invalid()) {
+        <ul>
+            @for (error of loginForm.password().errors(); track $index) {
+            <li>{{ error.message }}</li>
+            }
+        </ul>
+        }
         <button class="btn btn-neutral mt-4" (click)="login()">Login</button>
     </fieldset>
 </div>
