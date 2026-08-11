@@ -1,0 +1,72 @@
+<div class="card bg-base-100 shadow-xl border border-base-300">
+  <div class="card-body">
+    <h2 class="card-title">New voice memo</h2>
+    <p class="text-sm text-base-content/60">Record directly in your browser, or upload an existing audio file.</p>
+
+    <!-- Record visual -->
+    <div class="flex flex-col items-center gap-5 py-10 bg-base-200 rounded-box mt-4">
+      <div class="flex items-end gap-1 h-12">
+        <span class="w-1.5 bg-primary/70 rounded-full h-3"></span>
+        <span class="w-1.5 bg-primary/70 rounded-full h-6"></span>
+        <span class="w-1.5 bg-primary/70 rounded-full h-9"></span>
+        <span class="w-1.5 bg-primary rounded-full h-12"></span>
+        <span class="w-1.5 bg-primary/70 rounded-full h-7"></span>
+        <span class="w-1.5 bg-primary/70 rounded-full h-10"></span>
+        <span class="w-1.5 bg-primary/70 rounded-full h-4"></span>
+        <span class="w-1.5 bg-primary/70 rounded-full h-8"></span>
+        <span class="w-1.5 bg-primary/70 rounded-full h-5"></span>
+      </div>
+
+      <div class="text-3xl font-mono tabular-nums">00:00</div>
+
+      <button type="button" class="btn btn-circle btn-error btn-lg shadow-lg" aria-label="Start recording">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 1a3 3 0 00-3 3v7a3 3 0 006 0V4a3 3 0 00-3-3z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 10v1a7 7 0 01-14 0v-1M12 18v4m-4 0h8" />
+        </svg>
+      </button>
+
+      <p class="text-xs uppercase tracking-wide text-base-content/50">Tap to start recording</p>
+    </div>
+
+    <div class="divider">OR UPLOAD A FILE</div>
+
+    <!-- Upload dropzone -->
+    <div class="border-2 border-dashed border-base-300 rounded-box p-8 text-center hover:border-primary transition-colors">
+      <input type="file" class="hidden" accept="audio/*" #fileInput (change)="onFileSelected($event)">
+
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.9A5.5 5.5 0 0117 8.5a4.5 4.5 0 01-1 8.9M12 12v9m0-9l-3 3m3-3l3 3" />
+      </svg>
+      <p class="mt-2 text-sm text-base-content/60">Drag & drop an audio file, or</p>
+      <button type="button" class="btn btn-outline btn-primary btn-sm mt-3" (click)="fileInput.click()">Browse files</button>
+      <p class="mt-2 text-xs text-base-content/40">MP3, WAV, M4A up to 100MB</p>
+    </div>
+
+    @if (showUpload && !uploading) {
+      <div class="alert bg-base-200 border border-base-300 mt-4 flex items-center justify-between">
+        <div class="flex items-center gap-2 min-w-0">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l10-2v13M9 19a2 2 0 11-4 0 2 2 0 014 0zm10-2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          <span class="truncate">{{ file?.name }}</span>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" (click)="uploadFile()">Upload</button>
+      </div>
+    }
+
+    @if (uploading) {
+      <div class="mt-4">
+        <div class="flex items-center justify-between text-sm mb-1">
+          <span>Uploading {{ file?.name }}...</span>
+        </div>
+        <progress class="progress progress-primary w-full"></progress>
+      </div>
+    }
+
+    <label class="label cursor-pointer justify-start gap-3 mt-5">
+      <input type="checkbox" class="toggle toggle-primary" checked />
+      <span class="label-text">Automatically transcribe this recording</span>
+    </label>
+  </div>
+</div>
