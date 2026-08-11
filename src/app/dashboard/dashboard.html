@@ -1,5 +1,6 @@
-<input type="file" class="hidden" #fileInput accept=".m4a" (change)="onFileSelected($event)">
+<input type="file" class="hidden" accept="audio/*" #fileInput (change)="onFileSelected($event)">
 <button class="border border-white" (click)="fileInput.click()">Select File</button>
 @if (showUpload && !uploading) {
+<br>
 <button class="border border-white" (click)="uploadFile()">Upload {{ file?.name}}</button>
 }
