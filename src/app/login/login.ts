@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormField, email, form, minLength, required } from '@angular/forms/signals';
+import { Router } from '@angular/router';
 import axios from 'axios';
 import { schedulePromise } from 'rxjs/internal/scheduled/schedulePromise';
 
@@ -11,6 +12,7 @@ import { schedulePromise } from 'rxjs/internal/scheduled/schedulePromise';
   styleUrl: './login.css',
 })
 export class Login {
+  private router = inject(Router)
   loginModel = signal<{ username: string; password: string }>({
     username: '',
     password: ''
@@ -27,7 +29,10 @@ export class Login {
       Username: this.loginForm.username().value(),
       Password: this.loginForm.password().value()
     })
-    console.log(res)
-    this.loginModel.set({ username: "", password: "" })
+    this.loginForm.password().value.set("")
+    if (res.status === 200) {
+      localStorage.setItem("username", this.loginForm.username().value())
+      this.router.navigate(['/dashboard'])
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { Topbar } from './components/topbar/topbar';
 import { Sidebar } from './components/sidebar/sidebar';
 import { StatsRow } from './components/stats-row/stats-row';
@@ -13,4 +13,8 @@ import { RecentEntries } from './components/recent-entries/recent-entries';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
-export class Dashboard {}
+export class Dashboard {
+  username = signal(localStorage.getItem("username") ?? "Unknown")
+  // If less than 12 morning, 12-18 afternoon, 18+ evening
+  timeOfDay = signal(new Date().getHours() < 12 ? "morning" : new Date().getHours() < 18 ? "afternoon" : "evening")
+}
