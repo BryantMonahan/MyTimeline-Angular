@@ -1,2 +1,15 @@
 @import 'tailwindcss';
 @plugin "daisyui";
+
+.green-text-snackbar {
+    --mat-snack-bar-supporting-text-color: #00b906;
+    --mat-snack-bar-container-color: #333333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.red-text-snackbar {
+    --mat-snack-bar-supporting-text-color: red;
+    --mat-snack-bar-container-color: #333333;
+    text-align: center;
+}

@@ -65,9 +65,9 @@
     @if (uploading()) {
     <div class="mt-4">
       <div class="flex items-center justify-between text-sm mb-1">
-        <span>Uploading {{ file?.name }}... {{ uploadPercentage() }}%</span>
+        <span>Uploading {{ file?.name }}: {{ uploadPercentage() }}%</span>
       </div>
-      <progress class="progress progress-primary w-full"></progress>
+      <progress class="progress progress-primary w-full" [value]="uploadPercentage()" max="100"></progress>
     </div>
     }
 

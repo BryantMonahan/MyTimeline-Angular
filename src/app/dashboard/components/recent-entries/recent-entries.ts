@@ -1,6 +1,7 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import axios from 'axios';
 import { JournalEntry } from '../../../Types/journal-entry';
+import { UpdateDataService } from '../../../services/update-data-service';
 
 @Component({
   selector: 'app-recent-entries',
@@ -10,8 +11,17 @@ import { JournalEntry } from '../../../Types/journal-entry';
 })
 export class RecentEntries implements OnInit {
   entries = signal<JournalEntry[]>([])
+  private updateDataService = inject(UpdateDataService)
+  updateData = effect(async () => {
+    this.updateDataService.addEntry()
+    await this.getEntries()
+  })
 
   async ngOnInit() {
+    await this.getEntries()
+  }
+
+  async getEntries() {
     // get the most recent entries that the user has made
     const recentEntriesRes = await axios.get<JournalEntry[]>(`${import.meta.env.NG_APP_API_URL}/api/Audio/most-recent-entries`, {
       params: {
@@ -19,7 +29,6 @@ export class RecentEntries implements OnInit {
       }
     })
     this.entries.set(recentEntriesRes.data)
-    console.log(this.entries())
   }
 
   playAudio(id: string) {
