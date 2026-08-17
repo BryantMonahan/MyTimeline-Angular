@@ -37,7 +37,7 @@
               <div class="font-medium">{{ entry.name }}</div>
               <div class="text-xs text-base-content/50">{{ entry.description || "No description" }}</div>
             </td>
-            <td>{{ entry.created ?? entry.uploaded }}</td>
+            <td>{{ entry.created ?? entry.uploaded | date: 'short' }}</td>
             <!-- TODO: Create a pipe to convert seconds to minutes:seconds -->
             <td class="font-mono">{{ entry.secLength }}</td>
             @if (entry.transcribed === 0) {

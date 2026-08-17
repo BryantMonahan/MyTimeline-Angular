@@ -2,10 +2,11 @@ import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import axios from 'axios';
 import { JournalEntry } from '../../../Types/journal-entry';
 import { UpdateDataService } from '../../../services/update-data-service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-recent-entries',
-  imports: [],
+  imports: [DatePipe],
   templateUrl: './recent-entries.html',
   styleUrl: './recent-entries.css',
 })
