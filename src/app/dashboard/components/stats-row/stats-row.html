@@ -8,8 +8,8 @@
       </svg>
     </div>
     <div class="stat-title">Total entries</div>
-    <div class="stat-value text-primary">128</div>
-    <div class="stat-desc">↗ 12 new this month</div>
+    <div class="stat-value text-primary">{{totalEntries()}}</div>
+    <!-- <div class="stat-desc">↗ 12 new this month</div> -->
   </div>
 
   <div class="stat">
@@ -20,7 +20,7 @@
       </svg>
     </div>
     <div class="stat-title">Recorded time</div>
-    <div class="stat-value text-secondary">14h 32m</div>
+    <div class="stat-value text-secondary">{{ (secondTotal() * 1000) | date:'HH:mm:ss':'UTC' }}</div>
     <div class="stat-desc">Across all journals</div>
   </div>
 
@@ -32,19 +32,20 @@
       </svg>
     </div>
     <div class="stat-title">Words Transcribed</div>
-    <div class="stat-value text-success">96</div>
-    <div class="stat-desc">75% of entries</div>
+    <div class="stat-value text-success">{{ wordsTotal() }}</div>
+    <div class="stat-desc">{{ percentTranscribed() }} transcribed</div>
   </div>
 
   <div class="stat">
     <div class="stat-figure text-warning">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"
         stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M12 8v4l2.5 2.5M12 4a8 8 0 100 16 8 8 0 000-16zm0 0V2m-2 0h4M18 6l1.5-1.5" />
       </svg>
     </div>
-    <div class="stat-title">Day streak</div>
-    <div class="stat-value text-warning">9</div>
-    <div class="stat-desc">Keep it going!</div>
+    <div class="stat-title">Longest entry</div>
+    <div class="stat-value text-warning">{{ (longestEntrySeconds() * 1000) | date:'HH:mm:ss':'UTC' }}</div>
+    <!-- <div class="stat-desc">Keep it going!</div> -->
   </div>
 </div>
