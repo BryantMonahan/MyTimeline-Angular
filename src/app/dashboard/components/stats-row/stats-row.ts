@@ -24,7 +24,7 @@ export class StatsRow implements OnInit {
 
   public StatsRow() {
     effect(async () => {
-      this.updateDataService.addEntry()
+      this.updateDataService.updateEntriesVar()
       await this.updateData()
     })
   }

@@ -4,5 +4,9 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root',
 })
 export class UpdateDataService {
-  addEntry = signal(false)
+  updateEntriesVar = signal(false)
+
+  updateEntries() {
+    this.updateEntriesVar.update(curr => !curr)
+  }
 }

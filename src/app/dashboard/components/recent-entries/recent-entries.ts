@@ -1,8 +1,12 @@
+import { SnackbarService } from './../../../services/snackbar-service';
 import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import axios from 'axios';
 import { JournalEntry } from '../../../Types/journal-entry';
 import { UpdateDataService } from '../../../services/update-data-service';
 import { DatePipe } from '@angular/common';
+import { MatDialog, MatDialogRef } from "@angular/material/dialog"
+import { ConfirmDialog } from '../../../helpers/confirm-dialog/confirm-dialog';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-recent-entries',
@@ -11,10 +15,12 @@ import { DatePipe } from '@angular/common';
   styleUrl: './recent-entries.css',
 })
 export class RecentEntries implements OnInit {
-  entries = signal<JournalEntry[]>([])
+  private snackbarService = inject(SnackbarService)
   private updateDataService = inject(UpdateDataService)
+  private matDialog = inject(MatDialog)
+  entries = signal<JournalEntry[]>([])
   updateData = effect(async () => {
-    this.updateDataService.addEntry()
+    this.updateDataService.updateEntriesVar()
     await this.getEntries()
   })
 
@@ -30,6 +36,7 @@ export class RecentEntries implements OnInit {
       }
     })
     this.entries.set(recentEntriesRes.data)
+    console.log(this.entries())
   }
 
   playAudio(id: string) {
@@ -40,7 +47,22 @@ export class RecentEntries implements OnInit {
 
   }
 
-  delete(id: string) {
+  async delete(id: string) {
+    try {
+      const confirmed = await this.confirmDelete()
+      if (!confirmed) return
+      const deleteEntryRes = await axios.delete(`${import.meta.env.NG_APP_API_URL}/api/Audio/delete-entry`, { headers: { ObjectKey: id } })
+      this.updateDataService.updateEntries()
+      this.snackbarService.openSnackbar("Entry deleted", "green", 2000)
+    } catch (error) {
+      console.log(error)
+      this.snackbarService.openSnackbar("Something went wrong deleting the file", "red", 2000)
+    }
+  }
 
+  async confirmDelete(): Promise<boolean> {
+    let matRef = this.matDialog.open(ConfirmDialog, { data: { message: "Are you sure you want to delete this entry?" } })
+    let result = firstValueFrom(matRef.afterClosed())
+    return result ?? false
   }
 }

@@ -38,8 +38,7 @@
               <div class="text-xs text-base-content/50">{{ entry.description || "No description" }}</div>
             </td>
             <td>{{ entry.created ?? entry.uploaded | date: 'short' }}</td>
-            <!-- TODO: Create a pipe to convert seconds to minutes:seconds -->
-            <td class="font-mono">{{ entry.secLength }}</td>
+            <td class="font-mono">{{ (entry.secLength * 1000) | date:'HH:mm:ss':'UTC' }}</td>
             @if (entry.transcribed === 0) {
             <td><span class="badge badge-success gap-1">Transcribed</span></td>
             } @else if (entry.transcribed === 1) {
@@ -58,7 +57,7 @@
                   </svg>
                 </button>
                 <button type="button" class="btn btn-ghost btn-xs btn-circle text-error" aria-label="Delete"
-                  (click)="delete(entry.id)">
+                  (click)="delete(entry.objectKey)">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round"

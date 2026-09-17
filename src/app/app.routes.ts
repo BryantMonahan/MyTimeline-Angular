@@ -4,6 +4,7 @@ import { Login } from './login/login';
 import { Register } from './register/register';
 import { PageNotFound } from './page-not-found/page-not-found';
 import { Dashboard } from './dashboard/dashboard';
+import { Transcripts } from './transcripts/transcripts';
 
 export const routes: Routes = [
     {
@@ -25,6 +26,11 @@ export const routes: Routes = [
         path: "dashboard",
         title: "Dashboard",
         component: Dashboard
+    },
+    {
+        path: "transcripts",
+        title: "Transcripts",
+        component: Transcripts
     },
     {
         path: "**",

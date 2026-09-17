@@ -49,7 +49,7 @@ export class VoiceRecorder {
       })
       this.snackBarService.openSnackbar("File uploaded 🎉", "green", 3000)
       // trigger other components to reload data
-      this.updateDataService.addEntry.update(curr => !curr)
+      this.updateDataService.updateEntries()
 
     } catch (error) {
       console.log(error)

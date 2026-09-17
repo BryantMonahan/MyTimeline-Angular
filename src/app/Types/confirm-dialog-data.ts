@@ -1,0 +1,3 @@
+interface ConfirmDialogData {
+    message: string
+}

@@ -13,3 +13,8 @@
     --mat-snack-bar-container-color: #333333;
     text-align: center;
 }
+
+.mat-mdc-dialog-container .mdc-dialog__surface {
+    /* the default background is white which causes weird looking corners */
+    background: transparent;
+}
