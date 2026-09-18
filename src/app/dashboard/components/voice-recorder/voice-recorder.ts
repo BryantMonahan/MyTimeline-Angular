@@ -2,7 +2,7 @@ import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core'
 import axios, { AxiosProgressEvent } from 'axios';
 import { UrlResponse } from '../../../Types/url-response';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { SnackbarService } from '../../../services/snackbar-service';
+import { AlertService } from '../../../services/alert-service';
 import { UpdateDataService } from '../../../services/update-data-service';
 
 
@@ -14,16 +14,26 @@ import { UpdateDataService } from '../../../services/update-data-service';
 })
 export class VoiceRecorder {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>
+  @ViewChild('autoTranscribe') autoTranscribe!: ElementRef<HTMLInputElement>
   file: File | null = null
   showUpload = signal(false)
   uploading = signal(false)
   uploadPercentage = signal(0)
-  private snackBarService = inject(SnackbarService)
+  private alertService = inject(AlertService)
   private updateDataService = inject(UpdateDataService)
 
   async uploadFile() {
     if (this.file === null) return
     try {
+      if (this.autoTranscribe && this.autoTranscribe.nativeElement.checked.valueOf()) {
+        const res = await axios.get<{ transcriptionsLeft: number }>(`${import.meta.env.NG_APP_API_URL}/api/Stats/transcriptions-left`)
+        if (res.data.transcriptionsLeft === 0) {
+          this.alertService.openSnackbar("You are out of free transcriptions", "red", 2000)
+        } else if (res.data.transcriptionsLeft !== -1) {
+          const cont = await this.alertService.openAlert(`You only have ${res.data.transcriptionsLeft} transcripts left. Do you want to continue?`)
+          if (!cont) return
+        }
+      }
       this.uploadPercentage.set(0)
       this.uploading.set(true)
       // get the presigned URL to upload the file
@@ -47,7 +57,7 @@ export class VoiceRecorder {
       await axios.post(`${import.meta.env.NG_APP_API_URL}/api/Audio/confirm-upload`, {
         ObjectKey: urlRes.data.key
       })
-      this.snackBarService.openSnackbar("File uploaded 🎉", "green", 3000)
+      this.alertService.openSnackbar("File uploaded 🎉", "green", 3000)
       // trigger other components to reload data
       this.updateDataService.updateEntries()
 
@@ -58,7 +68,7 @@ export class VoiceRecorder {
       if (axios.isAxiosError(error) || error instanceof Error) {
         errorMsg + `:\n${error.message}`
       }
-      this.snackBarService.openSnackbar(errorMsg, "red", 3000)
+      this.alertService.openSnackbar(errorMsg, "red", 3000)
     } finally {
       // reset the upload fields
       this.uploading.set(false)

@@ -1,4 +1,4 @@
-import { SnackbarService } from './../../../services/snackbar-service';
+import { AlertService } from '../../../services/alert-service';
 import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import axios from 'axios';
 import { JournalEntry } from '../../../Types/journal-entry';
@@ -15,7 +15,7 @@ import { firstValueFrom } from 'rxjs';
   styleUrl: './recent-entries.css',
 })
 export class RecentEntries implements OnInit {
-  private snackbarService = inject(SnackbarService)
+  private snackbarService = inject(AlertService)
   private updateDataService = inject(UpdateDataService)
   private matDialog = inject(MatDialog)
   entries = signal<JournalEntry[]>([])
