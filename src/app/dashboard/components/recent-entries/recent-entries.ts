@@ -43,8 +43,20 @@ export class RecentEntries implements OnInit {
 
   }
 
-  download(id: string) {
-
+  async download(objectKey: string, fileName: string) {
+    const urlRes = await axios.get<string>(`${import.meta.env.NG_APP_API_URL}/api/Audio/get-url`, {
+      params: { objectKey }
+    })
+    const s3Res = await axios.get(urlRes.data, {
+      responseType: 'blob'
+    })
+    const url = window.URL.createObjectURL(s3Res.data)
+    const link = document.createElement('a')
+    link.setAttribute('download', fileName)
+    link.href = url
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   async delete(id: string) {

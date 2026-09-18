@@ -1,7 +1,6 @@
 import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import axios, { AxiosProgressEvent } from 'axios';
 import { UrlResponse } from '../../../Types/url-response';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { AlertService } from '../../../services/alert-service';
 import { UpdateDataService } from '../../../services/update-data-service';
 
@@ -24,6 +23,7 @@ export class VoiceRecorder {
 
   async uploadFile() {
     if (this.file === null) return
+    let transcribe = false
     try {
       if (this.autoTranscribe && this.autoTranscribe.nativeElement.checked.valueOf()) {
         const res = await axios.get<{ transcriptionsLeft: number }>(`${import.meta.env.NG_APP_API_URL}/api/Stats/transcriptions-left`)
@@ -32,12 +32,15 @@ export class VoiceRecorder {
         } else if (res.data.transcriptionsLeft !== -1) {
           const cont = await this.alertService.openAlert(`You only have ${res.data.transcriptionsLeft} transcripts left. Do you want to continue?`)
           if (!cont) return
+          transcribe = true
+        } else {
+          transcribe = true
         }
       }
       this.uploadPercentage.set(0)
       this.uploading.set(true)
       // get the presigned URL to upload the file
-      const urlRes = await axios.get<UrlResponse>(`${import.meta.env.NG_APP_API_URL}/api/Audio/url`, {
+      const urlRes = await axios.get<UrlResponse>(`${import.meta.env.NG_APP_API_URL}/api/Audio/post-url`, {
         params: { fileName: this.file.name }
       })
 
@@ -55,7 +58,8 @@ export class VoiceRecorder {
 
       // check that the file was uploaded
       await axios.post(`${import.meta.env.NG_APP_API_URL}/api/Audio/confirm-upload`, {
-        ObjectKey: urlRes.data.key
+        ObjectKey: urlRes.data.key,
+        Transcribe: transcribe
       })
       this.alertService.openSnackbar("File uploaded 🎉", "green", 3000)
       // trigger other components to reload data
