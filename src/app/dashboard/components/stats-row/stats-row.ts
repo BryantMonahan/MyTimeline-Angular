@@ -19,7 +19,7 @@ export class StatsRow implements OnInit {
   wordsTotal = signal(0)
   longestEntrySeconds = signal(0)
   percentTranscribed = computed(() => {
-    return ((Math.floor(this.transcribedTotal() / this.totalEntries()) * 100)).toFixed(0).toString() + "%"
+    return ((Math.floor(this.transcribedTotal() / this.totalEntries() * 100))).toFixed(0).toString() + "%"
   })
 
   public StatsRow() {
@@ -35,6 +35,7 @@ export class StatsRow implements OnInit {
 
   async updateData() {
     const weeklyDataRes = await axios.get<StatsRowRes>(`${import.meta.env.NG_APP_API_URL}/api/Stats/stats-bar`)
+    console.log(weeklyDataRes)
     this.totalEntries.set(weeklyDataRes.data.totalEntries)
     this.bytesUsed.set(weeklyDataRes.data.bytesUsed)
     this.secondTotal.set(weeklyDataRes.data.secondTotal)

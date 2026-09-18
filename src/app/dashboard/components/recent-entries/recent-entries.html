@@ -26,16 +26,34 @@
 
           <tr class="hover">
             <td>
+              @if (playingKey() === entry.objectKey && isPlaying()) {
+              <button type="button" class="btn btn-circle btn-ghost btn-sm" aria-label="Pause"
+                (click)="pauseAudio()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+                </svg>
+              </button>
+              } @else {
               <button type="button" class="btn btn-circle btn-ghost btn-sm" aria-label="Play"
-                (click)="playAudio(entry.id)">
+                (click)="playAudio(entry.objectKey)">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z" />
                 </svg>
               </button>
+              }
             </td>
             <td>
               <div class="font-medium">{{ entry.name }}</div>
               <div class="text-xs text-base-content/50">{{ entry.description || "No description" }}</div>
+              @if (playingKey() === entry.objectKey) {
+              <div class="flex items-center gap-2 mt-1">
+                <input type="range" class="range range-xs range-primary w-40" min="0" [max]="duration()" step="0.1"
+                  [value]="currentTime()" (input)="seek($event)" aria-label="Seek" />
+                <span class="text-xs font-mono text-base-content/60">
+                  {{ (currentTime() * 1000) | date:'mm:ss':'UTC' }} / {{ (duration() * 1000) | date:'mm:ss':'UTC' }}
+                </span>
+              </div>
+              }
             </td>
             <td>{{ entry.created ?? entry.uploaded | date: 'short' }}</td>
             <td class="font-mono">{{ (entry.secLength * 1000) | date:'HH:mm:ss':'UTC' }}</td>
