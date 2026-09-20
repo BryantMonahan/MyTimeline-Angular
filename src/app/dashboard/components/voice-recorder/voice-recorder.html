@@ -5,29 +5,80 @@
 
     <!-- Record visual -->
     <div class="flex flex-col items-center gap-5 py-10 bg-base-200 rounded-box mt-4">
-      <div class="flex items-end gap-1 h-12">
-        <span class="w-1.5 bg-primary/70 rounded-full h-3"></span>
-        <span class="w-1.5 bg-primary/70 rounded-full h-6"></span>
-        <span class="w-1.5 bg-primary/70 rounded-full h-9"></span>
-        <span class="w-1.5 bg-primary rounded-full h-12"></span>
-        <span class="w-1.5 bg-primary/70 rounded-full h-7"></span>
-        <span class="w-1.5 bg-primary/70 rounded-full h-10"></span>
-        <span class="w-1.5 bg-primary/70 rounded-full h-4"></span>
-        <span class="w-1.5 bg-primary/70 rounded-full h-8"></span>
-        <span class="w-1.5 bg-primary/70 rounded-full h-5"></span>
+      <!-- Waveform: bars animate only while recording -->
+      <div class="waveform flex items-end gap-1 h-12" [class.waveform-active]="recordingState() === 'recording'"
+        aria-hidden="true">
+        @for (bar of [0, 1, 2, 3, 4, 5, 6, 7, 8]; track bar) {
+        <span class="waveform-bar w-1.5 bg-primary/70 rounded-full" [style.--i]="bar"></span>
+        }
       </div>
 
-      <div class="text-3xl font-mono tabular-nums">00:00</div>
+      <!-- Timer + status -->
+      <div class="flex flex-col items-center gap-1">
+        <div class="text-3xl font-mono tabular-nums" [class.text-error]="recordingState() === 'recording'"
+          aria-live="off">
+          {{ formattedTime() }}
+        </div>
+        <div class="h-5 flex items-center gap-2 text-xs uppercase tracking-wide">
+          @switch (recordingState()) {
+          @case ('recording') {
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-error"></span>
+          </span>
+          <span class="text-error font-semibold">Recording</span>
+          }
+          @case ('paused') {
+          <span class="inline-flex rounded-full h-2.5 w-2.5 bg-warning"></span>
+          <span class="text-warning font-semibold">Paused</span>
+          }
+          @default {
+          <span class="text-base-content/50">Tap to start recording</span>
+          }
+          }
+        </div>
+      </div>
 
-      <button type="button" class="btn btn-circle btn-error btn-lg shadow-lg" aria-label="Start recording">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-          stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 1a3 3 0 00-3 3v7a3 3 0 006 0V4a3 3 0 00-3-3z" />
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19 10v1a7 7 0 01-14 0v-1M12 18v4m-4 0h8" />
-        </svg>
-      </button>
+      <!-- Controls -->
+      <div class="flex items-center gap-4">
+        @if (recordingState() === 'inactive') {
+        <button type="button" class="btn btn-circle btn-error btn-lg shadow-lg" aria-label="Start recording"
+          (click)="startRecording()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 1a3 3 0 00-3 3v7a3 3 0 006 0V4a3 3 0 00-3-3z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 10v1a7 7 0 01-14 0v-1M12 18v4m-4 0h8" />
+          </svg>
+        </button>
+        } @else {
+        <!-- Pause / resume -->
+        @if (recordingState() === 'recording') {
+        <button type="button" class="btn btn-circle btn-outline btn-lg" aria-label="Pause recording"
+          (click)="pauseRecording()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="6" y="5" width="4" height="14" rx="1" />
+            <rect x="14" y="5" width="4" height="14" rx="1" />
+          </svg>
+        </button>
+        } @else {
+        <button type="button" class="btn btn-circle btn-outline btn-lg" aria-label="Resume recording"
+          (click)="resumeRecording()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5.14v13.72a1 1 0 001.5.86l11-6.86a1 1 0 000-1.72l-11-6.86A1 1 0 008 5.14z" />
+          </svg>
+        </button>
+        }
 
-      <p class="text-xs uppercase tracking-wide text-base-content/50">Tap to start recording</p>
+        <!-- Stop -->
+        <button type="button" class="btn btn-circle btn-error btn-lg shadow-lg" aria-label="Stop recording"
+          (click)="stopRecording()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="6" y="6" width="12" height="12" rx="2" />
+          </svg>
+        </button>
+        }
+      </div>
     </div>
 
     <div class="divider">OR UPLOAD A FILE</div>

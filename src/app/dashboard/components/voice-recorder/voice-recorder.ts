@@ -1,8 +1,10 @@
-import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import axios, { AxiosProgressEvent } from 'axios';
 import { UrlResponse } from '../../../Types/url-response';
 import { AlertService } from '../../../services/alert-service';
 import { UpdateDataService } from '../../../services/update-data-service';
+import { AudioRecordingService } from '../../../services/audio-recording-service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 
 
 @Component({
@@ -11,15 +13,56 @@ import { UpdateDataService } from '../../../services/update-data-service';
   templateUrl: './voice-recorder.html',
   styleUrl: './voice-recorder.css',
 })
-export class VoiceRecorder {
+export class VoiceRecorder implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>
   @ViewChild('autoTranscribe') autoTranscribe!: ElementRef<HTMLInputElement>
   file: File | null = null
   showUpload = signal(false)
   uploading = signal(false)
+  recordingState = signal<RecordingState>('inactive')
+  formattedTime = signal("00:00")
   uploadPercentage = signal(0)
   private alertService = inject(AlertService)
   private updateDataService = inject(UpdateDataService)
+  private audioRecordingService = inject(AudioRecordingService)
+  private destroyRef = inject(DestroyRef)
+
+  ngOnInit() {
+    this.audioRecordingService.audioBlob$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(blob => this.finishRecording(blob))
+    this.recordingState = this.audioRecordingService.recordingState
+  }
+
+  startRecording() {
+    this.audioRecordingService.startRecording()
+  }
+
+  pauseRecording() {
+    this.audioRecordingService.pauseRecording()
+  }
+
+  resumeRecording() {
+    this.audioRecordingService.resumeRecording()
+  }
+
+  stopRecording() {
+    this.audioRecordingService.stopRecording()
+  }
+
+  async finishRecording(blob: Blob) {
+    console.log("finished Recording")
+    const file = new File([blob], Date.now().toString() + `.${blob.type.replace('audio/', '')}`, {
+      type: blob.type,
+      lastModified: Date.now()
+    })
+    console.log(file)
+
+    const dataTransfer = new DataTransfer()
+    dataTransfer.items.add(file)
+    if (this.fileInput) {
+      this.fileInput.nativeElement.files = dataTransfer.files
+      this.onFileSelected()
+    }
+  }
 
   async uploadFile() {
     if (this.file === null) return
@@ -87,9 +130,9 @@ export class VoiceRecorder {
    * Set our file var to the file uploaded or reset var if not file was given
    * @param event File change event
    */
-  onFileSelected(event: Event) {
-    event.preventDefault()
-    const input = event.target as HTMLInputElement
+  onFileSelected(event?: Event) {
+    if (event) event.preventDefault()
+    const input = this.fileInput.nativeElement
     if (input.files && input.files.length > 0) {
       this.file = input.files[0]
       this.showUpload.set(true)
