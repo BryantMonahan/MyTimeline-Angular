@@ -29,6 +29,6 @@ export class WeeklyStreak implements OnInit {
     }
     // flip it so Today is on the right
     this.days.reverse()
-    this.numOfEntriesText.set(activeDays === 1 ? "1 entry" : `${activeDays} entries`)
+    this.numOfEntriesText.set(activeDays === 1 ? "1 day" : `${activeDays} days`)
   }
 }

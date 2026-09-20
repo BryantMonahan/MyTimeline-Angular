@@ -15,7 +15,7 @@ import { firstValueFrom } from 'rxjs';
   styleUrl: './recent-entries.css',
 })
 export class RecentEntries implements OnInit, OnDestroy {
-  private snackbarService = inject(AlertService)
+  private alertService = inject(AlertService)
   private updateDataService = inject(UpdateDataService)
   private matDialog = inject(MatDialog)
   entries = signal<JournalEntry[]>([])
@@ -67,7 +67,7 @@ export class RecentEntries implements OnInit, OnDestroy {
     } catch (error) {
       console.log(error)
       this.stopAudio()
-      this.snackbarService.openSnackbar("Something went wrong playing the file", "red", 2000)
+      this.alertService.openSnackbar("Something went wrong playing the file", "red", 2000)
     }
   }
 
@@ -117,10 +117,10 @@ export class RecentEntries implements OnInit, OnDestroy {
       if (!confirmed) return
       const deleteEntryRes = await axios.delete(`${import.meta.env.NG_APP_API_URL}/api/Audio/delete-entry`, { headers: { ObjectKey: id } })
       this.updateDataService.updateEntries()
-      this.snackbarService.openSnackbar("Entry deleted", "green", 2000)
+      this.alertService.openSnackbar("Entry deleted", "green", 2000)
     } catch (error) {
       console.log(error)
-      this.snackbarService.openSnackbar("Something went wrong deleting the file", "red", 2000)
+      this.alertService.openSnackbar("Something went wrong deleting the file", "red", 2000)
     }
   }
 
@@ -128,5 +128,25 @@ export class RecentEntries implements OnInit, OnDestroy {
     let matRef = this.matDialog.open(ConfirmDialog, { data: { message: "Are you sure you want to delete this entry?" } })
     let result = firstValueFrom(matRef.afterClosed())
     return result ?? false
+  }
+
+  async favorite(entryId: string) {
+    try {
+      await axios.post(`${import.meta.env.NG_APP_API_URL}/api/Audio/favorite`, {
+        Id: entryId
+      })
+      // flip the var in our array. No other component depends on an entry being favorited so it doesn't need to trigger a data refresh
+      this.entries.update(entries => entries.map(entry => {
+        if (entry.id === entryId) {
+          entry.favorite = !entry.favorite
+          return entry
+        } else {
+          return entry
+        }
+      }))
+    } catch (error) {
+      console.log(error)
+      this.alertService.openSnackbar("Something went wrong favoriting entry", "red", 2000)
+    }
   }
 }

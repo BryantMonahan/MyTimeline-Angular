@@ -12,6 +12,7 @@ export interface JournalEntry {
     secLength: number;
     sizeInBytes: number;
     title: string;
+    favorite: boolean;
     transcription: string | null;
     summary: string | null;
     validated: boolean;
