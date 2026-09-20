@@ -11,6 +11,7 @@ export interface JournalEntry {
     description: string;
     secLength: number;
     sizeInBytes: number;
+    title: string;
     transcription: string | null;
     summary: string | null;
     validated: boolean;

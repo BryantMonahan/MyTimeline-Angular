@@ -9,10 +9,13 @@ export class AudioRecordingService {
   private audioChunks: Blob[] = [];
   private audioBlobSubject = new Subject<Blob>();
   recordingState = signal<RecordingState>("inactive")
+  secondsElapsed = signal(0)
+  timerInterval: ReturnType<typeof setInterval> | null = null
   audioBlob$: Observable<Blob> = this.audioBlobSubject.asObservable();
 
   async startRecording() {
     this.audioChunks = []
+    this.secondsElapsed.set(0)
 
     try {
       const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true })
@@ -30,6 +33,7 @@ export class AudioRecordingService {
       }
 
       this.mediaRecorder.start()
+      this.timerInterval = setInterval(() => this.secondsElapsed.update(t => t + .25), 250)
       this.recordingState.set("recording")
     } catch (error) {
       console.log(error)
@@ -40,6 +44,8 @@ export class AudioRecordingService {
   pauseRecording() {
     if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
       this.mediaRecorder.pause()
+      console.log(this.secondsElapsed())
+      clearInterval(this.timerInterval!)
       this.recordingState.set("paused")
     }
   }
@@ -47,6 +53,7 @@ export class AudioRecordingService {
   resumeRecording() {
     if (this.mediaRecorder && this.mediaRecorder.state === 'paused') {
       this.mediaRecorder.resume()
+      this.timerInterval = setInterval(() => this.secondsElapsed.update(t => t + .25), 250)
       this.recordingState.set("recording")
     }
   }
@@ -54,6 +61,8 @@ export class AudioRecordingService {
   stopRecording() {
     if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
       this.mediaRecorder.stop()
+      clearInterval(this.timerInterval!)
+      this.secondsElapsed.set(0)
       this.recordingState.set("inactive")
     }
   }

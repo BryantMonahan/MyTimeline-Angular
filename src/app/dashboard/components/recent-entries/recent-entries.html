@@ -27,8 +27,7 @@
           <tr class="hover">
             <td>
               @if (playingKey() === entry.objectKey && isPlaying()) {
-              <button type="button" class="btn btn-circle btn-ghost btn-sm" aria-label="Pause"
-                (click)="pauseAudio()">
+              <button type="button" class="btn btn-circle btn-ghost btn-sm" aria-label="Pause" (click)="pauseAudio()">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
                 </svg>
@@ -43,7 +42,7 @@
               }
             </td>
             <td>
-              <div class="font-medium">{{ entry.name }}</div>
+              <div class="font-medium">{{ entry.title ?? entry.name }}</div>
               <div class="text-xs text-base-content/50">{{ entry.description || "No description" }}</div>
               @if (playingKey() === entry.objectKey) {
               <div class="flex items-center gap-2 mt-1">

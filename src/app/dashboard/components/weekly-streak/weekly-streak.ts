@@ -16,9 +16,10 @@ export class WeeklyStreak implements OnInit {
     const curr = new Date()
     const weeklyStreakRes = await axios.get<boolean[]>(`${import.meta.env.NG_APP_API_URL}/api/Stats/past-seven-days`, {
       params: {
-        TimeSinceMidnight: curr.getHours() * 60 + curr.getMinutes()
+        MinutesPastMidnight: curr.getHours() * 60 + curr.getMinutes()
       }
     })
+    console.log(weeklyStreakRes)
     const day = new Date()
     let activeDays = 0
     for (const active of weeklyStreakRes.data) {
