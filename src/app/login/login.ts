@@ -1,9 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FormField, email, form, minLength, required } from '@angular/forms/signals';
+import { FormField, form, minLength, required } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import axios from 'axios';
-import { schedulePromise } from 'rxjs/internal/scheduled/schedulePromise';
 
 @Component({
   selector: 'app-login',

@@ -14,6 +14,7 @@ export interface JournalEntry {
     title: string;
     favorite: boolean;
     transcription: string | null;
+    wordCount: number;
     summary: string | null;
     validated: boolean;
     transcribed: TranscriptionStatus;
